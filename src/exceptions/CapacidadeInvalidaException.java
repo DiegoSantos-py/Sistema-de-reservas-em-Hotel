@@ -1,6 +1,6 @@
 package exceptions;
 
-public class CapacidadeInvalidaException {
+public class CapacidadeInvalidaException extends Exception {
     public CapacidadeInvalidaException(String msg){
         super(msg);
     }

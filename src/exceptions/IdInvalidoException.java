@@ -1,6 +1,6 @@
 package exceptions;
 
-public class IdInvalidoException {
+public class IdInvalidoException extends Exception {
     public IdInvalidoException(String msg){
         super(msg);
     }
