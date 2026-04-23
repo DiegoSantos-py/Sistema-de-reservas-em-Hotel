@@ -1,8 +1,9 @@
 package model;
 
 import java.util.Objects;
+import java.nio.file.*;
 
-public class Quarto {
+public class Quarto implements java.io.Serializable{
     private final int id;
     private TIPO_QUARTO tipo;
     private int capacidade;
@@ -47,10 +48,9 @@ public class Quarto {
     // toString
     @Override
     public String toString() {
-        return String.format("Quarto %d - Tipo: %s (Tamanho: %s, Capacidade: %d, Disponível: %s)",
+        return String.format("Quarto %d - Tipo: %s (Capacidade: %d, Disponível: %s)",
                 this.id,
                 this.tipo,
-                this.tamanho,
                 this.capacidade,
                 this.status ? "Sim" : "Não");
     }

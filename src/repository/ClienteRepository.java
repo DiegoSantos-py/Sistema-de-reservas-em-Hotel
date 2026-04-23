@@ -5,7 +5,7 @@ import java.util.*;
 import java.nio.file.Path;
 
 public class ClienteRepository {
-    private static final Path ARQUIVO = Path.of("Cliente.bin");
+    private static final Path ARQUIVO = Path.of("Cliente.dat");
     private Map<Integer, Cliente> repo = new HashMap<>();
 
     private void writeRepo() {

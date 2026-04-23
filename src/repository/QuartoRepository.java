@@ -6,7 +6,7 @@ import java.util.*;
 import java.nio.file.Path;
 
 public class QuartoRepository {
-    private static final Path ARQUIVO = Path.of("Quarto.bin");
+    private static final Path ARQUIVO = Path.of("Quarto.dat");
     private Map<Integer, Quarto> repo = new HashMap<>();
 
     private void writeRepo() {

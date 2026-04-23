@@ -43,6 +43,15 @@ public class ConsoleView {
         }
     }
 
+    public int lerOpcaoTipo(String rotulo) {
+        System.out.print(rotulo + ": ");
+        try {
+            return Integer.parseInt(sc.nextLine().trim());
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
     public String lerTexto(String rotulo) {
         System.out.print(rotulo + ": ");
         return sc.nextLine();

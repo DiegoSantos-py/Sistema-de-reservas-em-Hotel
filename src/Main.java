@@ -15,7 +15,7 @@ public class Main{
             var quartoRepo = new QuartoRepository();
 
             ClienteService clienteService = new ClienteService();
-            ReservaService reservaService = new ReservaService();
+            ReservaService reservaService = new ReservaService( clienteRepo, reservaRepo);
             QuartoService quartoService = new QuartoService(quartoRepo);
 
             ConsoleView consoleView = new ConsoleView();

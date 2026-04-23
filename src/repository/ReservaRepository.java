@@ -5,7 +5,7 @@ import java.io.*;
 import java.nio.file.Path;
 
 public class ReservaRepository {
-    private static final Path ARQUIVO = Path.of("Reserva.bin");
+    private static final Path ARQUIVO = Path.of("Reserva.dat");
     private Map<Integer, Reserva> repo = new HashMap<>();
 
     public void save(Reserva r){

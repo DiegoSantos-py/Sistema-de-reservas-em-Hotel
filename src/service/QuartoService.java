@@ -9,7 +9,7 @@ import model.Quarto;
 import model.TIPO_QUARTO;
 import repository.QuartoRepository;
 
-public class QuartoService {
+public class QuartoService implements java.io.Serializable {
     private final QuartoRepository repo;
 
     public QuartoService(QuartoRepository repo) {
@@ -24,25 +24,25 @@ public class QuartoService {
         return repo.findById(id);
     }
 
-    public Quarto criar(Integer id, TIPO_QUARTO tipo, Integer capacidade)
+    public Quarto criar(Integer id, int tipo, Integer capacidade)
             throws IdInvalidoException, TipoInvalidoException, CapacidadeInvalidaException {
         validarIdParaCriacao(id);
         validarTipo(tipo);
         validarCapacidade(capacidade);
 
-        Quarto quarto = new Quarto(id, tipo, capacidade);
+        Quarto quarto = new Quarto(id, TIPO_QUARTO.fromCodigo(tipo), capacidade);
         repo.save(quarto);
         return quarto;
     }
 
-    public Quarto atualizar(Integer id, TIPO_QUARTO tipo, Integer capacidade)
+    public Quarto atualizar(Integer id, int tipo, Integer capacidade)
             throws IdInvalidoException, TipoInvalidoException, CapacidadeInvalidaException {
         validarIdExistente(id);
         validarTipo(tipo);
         validarCapacidade(capacidade);
 
         Quarto q = repo.findById(id);
-        q.setTipo(tipo);
+        q.setTipo(TIPO_QUARTO.fromCodigo(tipo));
         q.setCapacidade(capacidade);
         repo.save(q);
         return q;
@@ -53,19 +53,19 @@ public class QuartoService {
         return repo.deleteById(id);
     }
 
-    private void validarTipo(TIPO_QUARTO tipo) throws TipoInvalidoException {
-        try {
-            if (tipo == null) {
-                throw new NullPointerException();
-            }
+    private TIPO_QUARTO validarTipo(int codigo) throws TipoInvalidoException {
+    try {
+        return TIPO_QUARTO.fromCodigo(codigo);
 
-        } catch (NullPointerException e) {
-            throw new TipoInvalidoException("Tipo de quarto não pode ser nulo.");
+    } catch (IllegalArgumentException e) {
+        throw new TipoInvalidoException(
+            "Tipo de quarto inválido para o código: " + codigo
+        );
 
-        } finally {
-            System.out.println("Validação do tipo de quarto executada.");
-        }
+    } finally {
+        System.out.println("Validação do tipo de quarto executada.");
     }
+}
 
     private void validarCapacidade(Integer capacidade) throws CapacidadeInvalidaException {
         int capacidadeMax = 7;
@@ -76,9 +76,11 @@ public class QuartoService {
                 throw new NullPointerException();
             }
 
-            if (capacidade < capacidadeMin || capacidade > capacidadeMax) {
+            if (capacidade < capacidadeMin) {
                 throw new IllegalArgumentException();
             }
+
+            if(capacidade > capacidadeMax) {throw new IllegalArgumentException();}
 
         } catch (NullPointerException e) {
             throw new CapacidadeInvalidaException("Capacidade não pode ser nula.");
