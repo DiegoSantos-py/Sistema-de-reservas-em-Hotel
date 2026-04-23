@@ -5,17 +5,14 @@ import java.util.Objects;
 public class Quarto {
     private final int id;
     private TIPO_QUARTO tipo;
-    private String tamanho;
     private int capacidade;
     private boolean status;
 
     // Construtor
-    public Quarto(int id, TIPO_QUARTO tipo, String tamanho, int capacidade, boolean status) {
+    public Quarto(int id, TIPO_QUARTO tipo,  int capacidade) {
         this.id = id;
         this.tipo = tipo;
-        this.tamanho = tamanho;
         this.capacidade = capacidade;
-        this.status = status;
     }
 
     // Getters e Setters
@@ -29,14 +26,6 @@ public class Quarto {
 
     public void setTipo(TIPO_QUARTO tipo) {
         this.tipo = tipo;
-    }
-
-    public String getTamanho() {
-        return tamanho;
-    }
-
-    public void setTamanho(String tamanho) {
-        this.tamanho = tamanho;
     }
 
     public int getCapacidade() {
