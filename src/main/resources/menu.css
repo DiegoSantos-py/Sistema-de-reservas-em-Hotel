@@ -1,0 +1,51 @@
+.root {
+    -fx-background-color: #0f0f0f;
+}
+
+.container {
+    -fx-background-color: #0f0f0f;
+    -fx-alignment: center;
+}
+
+.titulo {
+    -fx-text-fill: #f0ece0;
+    -fx-font-size: 36px;
+    -fx-font-family: "Georgia";
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 8 0;
+}
+
+.subtitulo {
+    -fx-text-fill: #8a7f6e;
+    -fx-font-size: 13px;
+    -fx-font-family: "Georgia";
+    -fx-padding: 0 0 40 0;
+}
+
+.botao-menu {
+    -fx-background-color: #1a1a1a;
+    -fx-text-fill: #f0ece0;
+    -fx-font-size: 14px;
+    -fx-font-family: "Georgia";
+    -fx-padding: 18 40 18 40;
+    -fx-border-color: #3a3530;
+    -fx-border-width: 1;
+    -fx-border-radius: 2;
+    -fx-background-radius: 2;
+    -fx-cursor: hand;
+    -fx-min-width: 220;
+}
+
+.botao-menu:hover {
+    -fx-background-color: #c8a96e;
+    -fx-text-fill: #0f0f0f;
+    -fx-border-color: #c8a96e;
+}
+
+.separador {
+    -fx-background-color: #3a3530;
+    -fx-min-height: 1;
+    -fx-max-height: 1;
+    -fx-min-width: 220;
+    -fx-padding: 10 0 10 0;
+}
