@@ -1,5 +1,6 @@
 package service;
 
+import model.Quarto;
 import model.Reserva;
 import repository.ClienteRepository;
 import repository.ReservaRepository;
@@ -77,6 +78,11 @@ public class ReservaService {
         validarQuartoDisponivel(reserva.getNumQuarto(), null);
 
         repoReserva.save(reserva);
+
+        Quarto quarto = repoQuarto.findById(reserva.getNumQuarto());
+        quarto.setStatus(false); // false = indisponível
+        repoQuarto.save(quarto);
+
         return reserva;
     }
 

@@ -37,6 +37,9 @@ public class ReservaViewFx {
         VBox raiz = new VBox(15);
         raiz.setPadding(new Insets(20));
 
+        Button botaoVoltar    = new Button("Voltar ao menu");
+        botaoVoltar.setOnAction(e -> menu.exibir());
+
         Label titulo       = new Label("Fazer Reserva");
         GridPane formulario = criarFormulario();
         HBox botoes        = criarBotoes();
@@ -44,7 +47,7 @@ public class ReservaViewFx {
         listaReservas = new ListView<>(itensDaLista);
         listaReservas.setPrefHeight(180);
 
-        raiz.getChildren().addAll(titulo, formulario, botoes,
+        raiz.getChildren().addAll(botaoVoltar, titulo, formulario, botoes,
                 new Label("Reservas cadastradas:"), listaReservas);
         return raiz;
     }
@@ -102,14 +105,14 @@ public class ReservaViewFx {
         Button botaoAdicionar = new Button("Adicionar");
         Button botaoListar    = new Button("Atualizar lista");
         Button botaoLimpar    = new Button("Limpar campos");
-        Button botaoVoltar    = new Button("Voltar ao menu");
+
 
         botaoAdicionar.setOnAction(e -> cadastrarReserva());
         botaoListar.setOnAction(e -> atualizarLista());
         botaoLimpar.setOnAction(e -> limparCampos());
-        botaoVoltar.setOnAction(e -> menu.exibir());
 
-        return new HBox(10, botaoAdicionar, botaoListar, botaoLimpar, botaoVoltar);
+
+        return new HBox(10, botaoAdicionar, botaoListar, botaoLimpar);
     }
 
     private void limparCampos() {

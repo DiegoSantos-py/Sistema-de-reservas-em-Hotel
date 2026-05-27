@@ -103,6 +103,7 @@ public class HotelController {
     public void cadastrarReserva(int id, int clienteId, int numQuarto, String dataTexto) {
         LocalDateTime data = LocalDateTime.parse(dataTexto, FORMATTER);
         reservas.reservar(new Reserva(id, clienteId, data, numQuarto));
+
     }
 
     public void atualizarReserva(int id, int clienteId, int numQuarto, String dataTexto) {
