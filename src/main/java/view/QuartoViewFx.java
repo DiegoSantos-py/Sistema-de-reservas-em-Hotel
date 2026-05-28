@@ -1,6 +1,6 @@
 package view;
 
-import controller.HotelController;
+import controller.QuartoController;
 import exceptions.CapacidadeInvalidaException;
 import exceptions.IdInvalidoException;
 import exceptions.TipoInvalidoException;
@@ -18,7 +18,7 @@ import javafx.stage.StageStyle;
 
 public class QuartoViewFx {
     private final Stage stage;
-    private final HotelController controller;
+    private final QuartoController quartoController;
     private final MenuViewFx menu;
 
     private TextField campoId;
@@ -26,11 +26,14 @@ public class QuartoViewFx {
     private TIPO_QUARTO tipoSelecionado;
     private TextField campoCapacidade;
 
+
+    private TextField campoDeletarId;
+
     private TableView<Quarto> tabelaQuartos;
 
-    public QuartoViewFx(Stage stage, HotelController controller, MenuViewFx menu) {
+    public QuartoViewFx(Stage stage, QuartoController quartoController, MenuViewFx menu) {
         this.stage      = stage;
-        this.controller = controller;
+        this.quartoController = quartoController;
         this.menu       = menu;
     }
 
@@ -43,7 +46,9 @@ public class QuartoViewFx {
         HBox botoes     = criarBotoes();
         tabelaQuartos   = criarTabela();
 
-        raiz.getChildren().addAll(titulo, formulario, botoes, tabelaQuartos);
+        HBox formDeletar = criarFormularioDeletar();
+
+        raiz.getChildren().addAll(titulo, formulario, botoes, tabelaQuartos, formDeletar);
         return raiz;
     }
 
@@ -78,6 +83,20 @@ public class QuartoViewFx {
 
         return grid;
     }
+    private HBox criarFormularioDeletar() {
+        campoDeletarId = new TextField();
+        campoDeletarId.setPromptText("Id do quarto");
+
+        Button botaoDeletar = new Button("Deletar");
+
+        botaoDeletar.setOnAction(e -> deletar());
+
+        return new HBox(10,
+                new Label("Deletar quarto por Id:"),
+                campoDeletarId,
+                botaoDeletar
+        );
+    }
 
     // ── Tabela de quartos cadastrados ─────────────────────────────────
     private TableView<Quarto> criarTabela() {
@@ -103,7 +122,7 @@ public class QuartoViewFx {
 
     private void atualizarTabela(TableView<Quarto> tabela) {
         tabela.setItems(FXCollections.observableArrayList(
-                controller.listarQuartos().values()
+                quartoController.listarQuartos().values()
         ));
     }
 
@@ -163,7 +182,7 @@ public class QuartoViewFx {
         int capacidade = Integer.parseInt(campoCapacidade.getText());
 
         try {
-            controller.cadastrarQuarto(id, tipoSelecionado.getCodigo(), capacidade);
+            quartoController.cadastrarQuarto(id, tipoSelecionado.getCodigo(), capacidade);
             mostrarInformacao("Cadastro de Quartos", "Quarto cadastrado com sucesso");
             atualizarTabela(tabelaQuartos); // ← atualiza a tabela após salvar
         } catch (IdInvalidoException e) {
@@ -172,6 +191,17 @@ public class QuartoViewFx {
             mostrarErro("Capacidade inválida");
         } catch (TipoInvalidoException e) {
             mostrarErro("Tipo inválido");
+        }
+    }
+
+    private void deletar(){
+        int id = Integer.parseInt(campoDeletarId.getText());
+        try{
+            quartoController.removerQuarto(id);
+            atualizarTabela(tabelaQuartos);
+        }
+        catch (IdInvalidoException e){
+            mostrarErro(e.getMessage());
         }
     }
 

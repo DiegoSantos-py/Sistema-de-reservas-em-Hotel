@@ -1,6 +1,8 @@
 package view;
 
-import controller.HotelController;
+import controller.ClienteController;
+import controller.ReservaController;
+import exceptions.IdInvalidoException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -16,10 +18,12 @@ import java.time.format.DateTimeParseException;
 
 public class ReservaViewFx {
     private final Stage stage;
-    private final HotelController controller;
+    private final ReservaController reservaController;
+    private final ClienteController clienteController;
     private final MenuViewFx menu;
 
     private TextField campoId;
+    private TextField campoDeleteId;
     private TextField campoClienteId;
     private TextField campoNumQuarto;
     private TextField campoDataHora;
@@ -27,9 +31,10 @@ public class ReservaViewFx {
     private final ObservableList<String> itensDaLista = FXCollections.observableArrayList();
     private ListView<String> listaReservas;
 
-    public ReservaViewFx(Stage stage, HotelController controller, MenuViewFx menu) {
+    public ReservaViewFx(Stage stage, ReservaController reservaController, ClienteController clienteController, MenuViewFx menu) {
         this.stage      = stage;
-        this.controller = controller;
+        this.reservaController = reservaController;
+        this.clienteController = clienteController;
         this.menu       = menu;
     }
 
@@ -37,18 +42,19 @@ public class ReservaViewFx {
         VBox raiz = new VBox(15);
         raiz.setPadding(new Insets(20));
 
-        Button botaoVoltar    = new Button("Voltar ao menu");
-        botaoVoltar.setOnAction(e -> menu.exibir());
-
         Label titulo       = new Label("Fazer Reserva");
         GridPane formulario = criarFormulario();
         HBox botoes        = criarBotoes();
+        HBox formularioDeletar = criarFormularioDeletar();
 
         listaReservas = new ListView<>(itensDaLista);
         listaReservas.setPrefHeight(180);
 
-        raiz.getChildren().addAll(botaoVoltar, titulo, formulario, botoes,
-                new Label("Reservas cadastradas:"), listaReservas);
+
+        atualizarLista();
+        raiz.getChildren().addAll(titulo, formulario, botoes,
+                new Label("Reservas cadastradas:"), listaReservas, formularioDeletar);
+
         return raiz;
     }
 
@@ -59,7 +65,7 @@ public class ReservaViewFx {
             int numQuarto = Integer.parseInt(campoNumQuarto.getText());
             String dataHora = campoDataHora.getText();
 
-            controller.cadastrarReserva(id, clienteId, numQuarto, dataHora);
+            reservaController.cadastrarReserva(id, clienteId, numQuarto, dataHora);
             mostrarInformacao("Reserva cadastrada", "Reserva cadastrada com sucesso.");
             limparCampos();
             atualizarLista();
@@ -75,12 +81,34 @@ public class ReservaViewFx {
         }
     }
 
+    private void deletarReserva() {
+        try {
+            int id = Integer.parseInt(campoDeleteId.getText());
+
+            boolean removed = reservaController.cancelarReserva(id);
+
+            if (removed) {
+                mostrarInformacao("Sucesso", "Reserva removida.");
+                atualizarLista();
+            } else {
+                mostrarErro("Reserva não encontrada.");
+            }
+
+            campoDeleteId.clear();
+
+        } catch (NumberFormatException e) {
+            mostrarErro("Id deve ser um número inteiro.");
+        } catch (IllegalStateException | IllegalArgumentException | IdInvalidoException e) {
+            mostrarErro(e.getMessage());
+        }
+    }
+
     private void atualizarLista() {
         itensDaLista.clear();
-        for (Reserva r : controller.listarReservas()) {
+        for (Reserva r : reservaController.listarReservas()) {
             itensDaLista.add(r.toString());
         }
-        if (controller.listarReservas().isEmpty()) {
+        if (reservaController.listarReservas().isEmpty()) {
             itensDaLista.add("Nenhuma reserva cadastrada.");
         }
     }
@@ -101,18 +129,36 @@ public class ReservaViewFx {
         return grid;
     }
 
+    private HBox criarFormularioDeletar() {
+        campoDeleteId = new TextField();
+        campoDeleteId.setPromptText("Id da reserva");
+
+        Button botaoDeletar = new Button("Deletar");
+
+        botaoDeletar.setOnAction(e -> deletarReserva());
+
+        HBox box = new HBox(10,
+                new Label("Deletar reserva por Id:"),
+                campoDeleteId,
+                botaoDeletar
+        );
+
+        return box;
+    }
+
+
     private HBox criarBotoes() {
         Button botaoAdicionar = new Button("Adicionar");
         Button botaoListar    = new Button("Atualizar lista");
         Button botaoLimpar    = new Button("Limpar campos");
-
+        Button botaoVoltar    = new Button("Voltar ao menu");
 
         botaoAdicionar.setOnAction(e -> cadastrarReserva());
         botaoListar.setOnAction(e -> atualizarLista());
         botaoLimpar.setOnAction(e -> limparCampos());
+        botaoVoltar.setOnAction(e -> menu.exibir());
 
-
-        return new HBox(10, botaoAdicionar, botaoListar, botaoLimpar);
+        return new HBox(10, botaoAdicionar, botaoListar, botaoLimpar, botaoVoltar);
     }
 
     private void limparCampos() {

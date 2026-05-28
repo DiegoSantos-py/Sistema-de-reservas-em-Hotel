@@ -1,6 +1,8 @@
 package view;
 
-import controller.HotelController;
+import controller.ClienteController;
+import controller.QuartoController;
+import controller.ReservaController;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -12,11 +14,15 @@ import javafx.stage.Stage;
 
 public class MenuViewFx {
     private final Stage stage;
-    private final HotelController controller;
+    private final ClienteController clienteController;
+    private final ReservaController reservaController;
+    private final QuartoController quartoController;
 
-    public MenuViewFx(Stage stage, HotelController controller) {
-        this.stage      = stage;
-        this.controller = controller;
+    public MenuViewFx(Stage stage,ClienteController clienteController, ReservaController reservaController, QuartoController quartoController) {
+        this.stage = stage;
+        this.clienteController = clienteController;
+        this.reservaController = reservaController;
+        this.quartoController = quartoController;
     }
 
     public void exibir() {
@@ -53,11 +59,11 @@ public class MenuViewFx {
         Button botaoReserva = new Button("Fazer Reserva");
 
         botaoCliente.setOnAction(e ->
-                stage.getScene().setRoot(new ClienteViewFx(stage, controller, this).construirLayout()));
+                stage.getScene().setRoot(new ClienteViewFx(stage, clienteController, this).construirLayout()));
         botaoQuarto.setOnAction(e ->
-                stage.getScene().setRoot(new QuartoViewFx(stage, controller, this).construirLayout()));
+                stage.getScene().setRoot(new QuartoViewFx(stage, quartoController, this).construirLayout()));
         botaoReserva.setOnAction(e ->
-                stage.getScene().setRoot(new ReservaViewFx(stage, controller, this).construirLayout()));
+                stage.getScene().setRoot(new ReservaViewFx(stage, reservaController, clienteController, this).construirLayout()));
 
         HBox b = new HBox(10, botaoCliente, botaoQuarto, botaoReserva);
         b.setAlignment(javafx.geometry.Pos.CENTER);

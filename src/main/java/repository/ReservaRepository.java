@@ -1,5 +1,6 @@
 package repository;
 
+import com.sun.source.tree.ReturnTree;
 import model.Reserva;
 import java.util.*;
 import java.io.*;
@@ -82,6 +83,24 @@ public class ReservaRepository {
         return resultado;
     }
 
+    public ArrayList<Reserva> findAllByClienteId(Integer clientId) {
+        ArrayList<Reserva> resultado = new ArrayList<>();
+        for(Reserva r : findAll().values() ){
+            if(Objects.equals(r.getClienteId(), clientId)){
+                resultado.add(r);
+            }
+        }
+        return resultado;
+    }
+
+    public boolean deleteByClienteId(Integer clientId) {
+
+        Map<Integer, Reserva> todos = findAll();
+        boolean deleted = todos.values().removeIf(r -> Objects.equals(r.getClienteId(), clientId));
+        reescreverTodos(todos);
+        return deleted;
+    }
+
     public Reserva findById(int id) {
         return findAll().get(id);
     }
@@ -93,15 +112,12 @@ public class ReservaRepository {
         return true;
     }
 
-    public boolean existsByRoom(Integer numQuarto, Integer id) {
+    public boolean existsReservaWithRoom(Integer numQuarto) {
         for (Reserva r : findAll().values()) {
-            boolean ehQuartoIgual = Objects.equals(numQuarto, r.getNumQuarto());
-            boolean ehIdDiferente = (id == null || r.getId() != id);
-            if (ehQuartoIgual && ehIdDiferente) return true;
+            if  (Objects.equals(numQuarto, r.getNumQuarto())) return true;
         }
         return false;
     }
-
     public boolean existsByClient(Integer clienteId) {
         for (Reserva r : findAll().values()) {
             if (Objects.equals(r.getClienteId(), clienteId)) return true;

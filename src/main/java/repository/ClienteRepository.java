@@ -63,7 +63,6 @@ public class ClienteRepository {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public Map<Integer, Cliente> findAll() {
         File arquivo = ARQUIVO.toFile();
         Map<Integer, Cliente> resultado = new HashMap<>();
@@ -104,7 +103,7 @@ public class ClienteRepository {
     public boolean deleteById(int id) {
         Map<Integer, Cliente> todos = findAll();
         if (todos.remove(id) == null) return false;
-        reescreverTodos(todos);
+            reescreverTodos(todos);
         return true;
     }
 

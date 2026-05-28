@@ -1,8 +1,11 @@
 
 
-import controller.HotelController;
+import controller.ClienteController;
+import controller.QuartoController;
+import controller.ReservaController;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import model.Cliente;
 import repository.ClienteRepository;
 import repository.QuartoRepository;
 import repository.ReservaRepository;
@@ -20,13 +23,15 @@ public class MainFx extends Application {
         QuartoRepository quartoRepository   = new QuartoRepository();
         ReservaRepository reservaRepository = new ReservaRepository();
 
-        ClienteService clienteService = new ClienteService(clienteRepository);
-        QuartoService quartoService   = new QuartoService(quartoRepository);
+        ClienteService clienteService = new ClienteService(clienteRepository, reservaRepository);
+        QuartoService quartoService   = new QuartoService(quartoRepository, reservaRepository);
         ReservaService reservaService = new ReservaService(clienteRepository, reservaRepository, quartoRepository);
 
-        HotelController controller = new HotelController(quartoService, clienteService, reservaService);
+        ClienteController clienteController = new ClienteController(clienteService);
+        QuartoController quartoController = new QuartoController(quartoService);
+        ReservaController reservaController = new ReservaController(reservaService);
 
-        MenuViewFx view = new MenuViewFx(stage, controller );
+        MenuViewFx view = new MenuViewFx(stage, clienteController, reservaController, quartoController );
         view.exibir();
     }
 

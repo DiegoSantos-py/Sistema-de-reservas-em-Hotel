@@ -1,5 +1,6 @@
 package service;
 
+import exceptions.IdInvalidoException;
 import model.Quarto;
 import model.Reserva;
 import repository.ClienteRepository;
@@ -75,7 +76,7 @@ public class ReservaService {
         validarIdParaCriacao(reserva.getId());
         validarCliente(reserva.getClienteId());
         validarQuarto(reserva.getNumQuarto());
-        validarQuartoDisponivel(reserva.getNumQuarto(), null);
+        validarQuartoDisponivel(reserva.getNumQuarto());
 
         repoReserva.save(reserva);
 
@@ -93,17 +94,25 @@ public class ReservaService {
 
         validarCliente(reserva.getClienteId());
         validarQuarto(reserva.getNumQuarto());
-        validarQuartoDisponivel(reserva.getNumQuarto(), reserva.getId());
+        validarQuartoDisponivel(reserva.getNumQuarto());
 
         repoReserva.save(reserva);
         return reserva;
     }
 
-    public boolean cancelar(int id) {
+    public boolean cancelar(int id) throws IdInvalidoException {
         if (repoReserva.findById(id) == null)
-            throw new IllegalArgumentException("Não existe reserva com id " + id + ".");
+            throw new IdInvalidoException("Não existe reserva com id " + id + ".");
         return repoReserva.deleteById(id);
     }
+
+    public boolean deleteByClienteId(int clienteId) throws IdInvalidoException {
+        if(repoReserva.findAllByClienteId(clienteId) == null){
+            throw new IdInvalidoException("Não existe reserva do cliente " + clienteId + ".");
+        }
+        return repoReserva.deleteByClienteId(clienteId);
+    }
+
 
     // -------------------------------------------------------------------------
     // Validações
@@ -127,8 +136,10 @@ public class ReservaService {
             throw new IllegalArgumentException("Quarto não encontrado para o número " + numQuarto + ".");
     }
 
-    private void validarQuartoDisponivel(Integer numQuarto, Integer idReservaAtual) {
-        if (repoReserva.existsByRoom(numQuarto, idReservaAtual))
+    private void validarQuartoDisponivel(Integer numQuarto) {
+        if (repoReserva.existsReservaWithRoom(numQuarto))
             throw new IllegalArgumentException("Já existe uma reserva para o quarto " + numQuarto + ".");
     }
+
+
 }

@@ -8,12 +8,14 @@ import exceptions.TipoInvalidoException;
 import model.Quarto;
 import model.TIPO_QUARTO;
 import repository.QuartoRepository;
+import repository.ReservaRepository;
 
 public class QuartoService {                            // removido Serializable — service não é serializável
     private final QuartoRepository repo;
-
-    public QuartoService(QuartoRepository repo) {
+    private final ReservaRepository reservas;
+    public QuartoService(QuartoRepository repo, ReservaRepository reservas ) {
         this.repo = repo;
+        this.reservas = reservas;
     }
 
     public Map<Integer, Quarto> listar() {
@@ -50,8 +52,13 @@ public class QuartoService {                            // removido Serializable
 
     public boolean remover(Integer id) throws IdInvalidoException {
         validarIdExistente(id);
+        if(reservas.existsReservaWithRoom(id)){
+            throw new IllegalStateException("Quarto possui reservas ativas e não pode ser removido.");
+        }
         return repo.deleteById(id);
     }
+
+
 
     // -------------------------------------------------------------------------
     // Validações

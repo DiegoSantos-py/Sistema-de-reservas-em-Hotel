@@ -1,7 +1,9 @@
 package service;
 
+import exceptions.IdInvalidoException;
 import model.Cliente;
 import repository.ClienteRepository;
+import repository.ReservaRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +12,11 @@ import java.util.Map;
 public class ClienteService {
 
     private final ClienteRepository repo;
+    private final ReservaRepository reservas;
 
-    public ClienteService(ClienteRepository repo) {
+    public ClienteService(ClienteRepository repo, ReservaRepository reservas) {
         this.repo = repo;
+        this.reservas = reservas;
     }
 
     // -------------------------------------------------------------------------
@@ -31,18 +35,19 @@ public class ClienteService {
         return c;
     }
 
+
     // -------------------------------------------------------------------------
     // Criação
     // -------------------------------------------------------------------------
 
-    public Cliente criar(int id, String nome, String cpf, String telefone) {
+    public Cliente criar(int id, String nome, String cpf, String telefone) throws IdInvalidoException {
         Cliente c = new Cliente(id, nome, cpf, telefone);
-        validar(c, null);
+        validar(c, id);
         repo.save(c);
         return c;
     }
 
-    public Cliente atualizar(int id, String nome, String cpf, String telefone) {
+    public Cliente atualizar(int id, String nome, String cpf, String telefone) throws IdInvalidoException {
         if (repo.findById(id) == null)
             throw new IllegalArgumentException("Cliente com id " + id + " não encontrado.");
 
@@ -62,8 +67,15 @@ public class ClienteService {
             throw new IllegalArgumentException("Cliente com id " + id + " não encontrado.");
         }
         boolean removido = repo.deleteById(id);
+        boolean removidoReservas = reservas.deleteByClienteId(id);
+
+
         if (!removido) {
             throw new RuntimeException("Falha ao remover o cliente com id " + id + ".");
+        }
+
+        if (!removidoReservas) {
+            throw new RuntimeException("Falha ao remover as reservas do cliente com id " + id + ".");
         }
     }
 
@@ -77,9 +89,12 @@ public class ClienteService {
      * @param c  o cliente a validar
      * @param id id a ignorar nas checagens de unicidade (null para novos registros)
      */
-    private void validar(Cliente c, Integer id) {
+    private void validar(Cliente c, Integer id) throws IdInvalidoException {
         if (c == null) {
             throw new IllegalArgumentException("Cliente não pode ser nulo.");
+        }
+        if(id == null) {
+            throw new IdInvalidoException("O id não pode ser nulo.");
         }
         if (c.getNome() == null || c.getNome().isBlank()) {
             throw new IllegalArgumentException("Nome do cliente é obrigatório.");
@@ -92,6 +107,9 @@ public class ClienteService {
         }
         if (c.getTelefone() == null || c.getTelefone().isBlank()) {
             throw new IllegalArgumentException("Telefone do cliente é obrigatório.");
+        }
+        if(repo.findById(id) != null){
+            throw new IdInvalidoException("O Id fornecido já está associado a um cliente: " + id);
         }
         if (repo.existsByCpf(c.getCpf(), id)) {
             throw new IllegalStateException("Já existe um cliente cadastrado com o CPF " + c.getCpf() + ".");
